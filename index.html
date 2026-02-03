@@ -1,0 +1,326 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+
+<!-- SEO -->
+<meta name="description" content="Play 2048 online for free. 2048 Pro+ is a fast, mobile-friendly puzzle game with dark, light, and neon themes. Enjoy swipe and keyboard controls, high-score tracking, and smooth gameplay.">
+<meta name="keywords" content="2048 play, 2048 game, play 2048 online, free 2048, 2048 puzzle, merge tiles game, brain game">
+<meta name="author" content="2048play.in">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>2048 Play Online | Free Mobile & Web Puzzle Game</title>
+
+<!-- FAVICON -->
+<link rel="icon" href="images/favicon.ico" type="image/x-icon">
+
+<style>
+* { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+/* THEMES */
+body.dark { background: #111; color: white; }
+body.light { background: #f2f2f2; color: #111; }
+body.neon { background: #000; color: #0ff; }
+
+header, footer {
+  padding: 12px;
+  text-align: center;
+  background: #222;
+}
+
+nav a {
+  color: inherit;
+  margin: 0 8px;
+  text-decoration: none;
+  font-weight: bold;
+}
+
+main {
+  flex: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 10px;
+}
+
+.game {
+  width: 100%;
+  max-width: 360px;
+  background: #222;
+  padding: 15px;
+  border-radius: 12px;
+}
+
+.stats, .controls {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.box {
+  background: #333;
+  padding: 6px 10px;
+  border-radius: 6px;
+  min-width: 90px;
+  text-align: center;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 8px;
+  background: #000;
+  padding: 8px;
+  border-radius: 10px;
+}
+
+.tile {
+  aspect-ratio: 1;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-weight: bold;
+  font-size: 24px;
+  border-radius: 6px;
+  background: #444;
+}
+
+/* TILE COLORS */
+.tile[data-value="2"] { background: #eee4da; color: #111; }
+.tile[data-value="4"] { background: #ede0c8; color: #111; }
+.tile[data-value="8"] { background: #f2b179; }
+.tile[data-value="16"] { background: #f59563; }
+.tile[data-value="32"] { background: #f67c5f; }
+.tile[data-value="64"] { background: #f65e3b; }
+.tile[data-value="128"] { background: #edcf72; color: #111; }
+.tile[data-value="256"] { background: #edcc61; color: #111; }
+.tile[data-value="512"] { background: #edc850; color: #111; }
+.tile[data-value="1024"] { background: #edc53f; color: #111; }
+.tile[data-value="2048"] { background: gold; color: #111; }
+
+img.preview {
+  width: 100%;
+  border-radius: 10px;
+  margin-bottom: 10px;
+}
+
+select, button {
+  padding: 6px;
+  border-radius: 5px;
+  border: none;
+}
+
+@media (max-width: 400px) {
+  .tile { font-size: 20px; }
+}
+</style>
+</head>
+
+<body class="dark">
+
+<header>
+  <h1>2048 Play Online</h1>
+  <nav>
+    <a href="index.html">Game</a>
+    <a href="about.html">About</a>
+    <a href="privacy.html">Privacy</a>
+    <a href="terms.html">Terms</a>
+    <a href="contact.html">Contact</a>
+  </nav>
+</header>
+
+<main>
+  <div class="game" id="gameBox">
+
+    <!-- IMAGE PLACEHOLDER -->
+    <img src="images/2048-preview.png" alt="2048 Game Preview" class="preview">
+
+    <div class="stats">
+      <div class="box">Score<br><span id="score">0</span></div>
+      <div class="box">High<br><span id="high">0</span></div>
+    </div>
+
+    <div class="controls">
+      <button id="restartBtn">Restart</button>
+      <select id="themeSelect">
+        <option value="dark">Dark</option>
+        <option value="light">Light</option>
+        <option value="neon">Neon</option>
+      </select>
+    </div>
+
+    <div class="grid" id="grid"></div>
+  </div>
+</main>
+
+<footer>
+  <p>Play 2048 online for free on desktop and mobile. Challenge your brain and beat your high score.</p>
+  <p>&copy; 2026 2048play.in</p>
+</footer>
+
+<script>
+const SIZE = 4;
+let board = [];
+let score = 0;
+let highScore = localStorage.getItem("high2048") || 0;
+
+const grid = document.getElementById("grid");
+const scoreDisplay = document.getElementById("score");
+const highDisplay = document.getElementById("high");
+const themeSelect = document.getElementById("themeSelect");
+const restartBtn = document.getElementById("restartBtn");
+
+function init() {
+  board = Array.from({ length: SIZE }, () => Array(SIZE).fill(0));
+  score = 0;
+  addTile();
+  addTile();
+  draw();
+}
+
+function addTile() {
+  const empty = [];
+  for (let i = 0; i < SIZE; i++) {
+    for (let j = 0; j < SIZE; j++) {
+      if (board[i][j] === 0) empty.push([i, j]);
+    }
+  }
+  if (!empty.length) return;
+  const [x, y] = empty[Math.floor(Math.random() * empty.length)];
+  board[x][y] = Math.random() < 0.9 ? 2 : 4;
+}
+
+function draw() {
+  grid.innerHTML = "";
+  scoreDisplay.textContent = score;
+  highDisplay.textContent = highScore;
+
+  for (let i = 0; i < SIZE; i++) {
+    for (let j = 0; j < SIZE; j++) {
+      const tile = document.createElement("div");
+      tile.className = "tile";
+      tile.dataset.value = board[i][j];
+      tile.textContent = board[i][j] === 0 ? "" : board[i][j];
+      grid.appendChild(tile);
+    }
+  }
+}
+
+function compress(row) {
+  const newRow = row.filter(n => n !== 0);
+  while (newRow.length < SIZE) newRow.push(0);
+  return newRow;
+}
+
+function merge(row) {
+  for (let i = 0; i < SIZE - 1; i++) {
+    if (row[i] === row[i + 1] && row[i] !== 0) {
+      row[i] *= 2;
+      score += row[i];
+      if (score > highScore) {
+        highScore = score;
+        localStorage.setItem("high2048", highScore);
+      }
+      row[i + 1] = 0;
+    }
+  }
+  return row;
+}
+
+function moveLeft() {
+  let moved = false;
+  for (let i = 0; i < SIZE; i++) {
+    let row = compress(board[i]);
+    row = merge(row);
+    row = compress(row);
+    if (row.toString() !== board[i].toString()) moved = true;
+    board[i] = row;
+  }
+  return moved;
+}
+
+function reverse() { board = board.map(r => r.reverse()); }
+function transpose() { board = board[0].map((_, i) => board.map(r => r[i])); }
+
+function moveRight() { reverse(); const m = moveLeft(); reverse(); return m; }
+function moveUp() { transpose(); const m = moveLeft(); transpose(); return m; }
+function moveDown() { transpose(); const m = moveRight(); transpose(); return m; }
+
+function gameOver() {
+  for (let i = 0; i < SIZE; i++) {
+    for (let j = 0; j < SIZE; j++) {
+      if (board[i][j] === 0) return false;
+      if (i < SIZE - 1 && board[i][j] === board[i + 1][j]) return false;
+      if (j < SIZE - 1 && board[i][j] === board[i][j + 1]) return false;
+    }
+  }
+  return true;
+}
+
+// Keyboard
+document.addEventListener("keydown", e => {
+  if (["ArrowLeft","ArrowRight","ArrowUp","ArrowDown"].includes(e.key)) {
+    e.preventDefault();
+  }
+
+  let moved = false;
+  if (["ArrowLeft","a","A"].includes(e.key)) moved = moveLeft();
+  if (["ArrowRight","d","D"].includes(e.key)) moved = moveRight();
+  if (["ArrowUp","w","W"].includes(e.key)) moved = moveUp();
+  if (["ArrowDown","s","S"].includes(e.key)) moved = moveDown();
+
+  if (moved) {
+    addTile();
+    draw();
+    if (gameOver()) alert("Game Over! Final Score: " + score);
+  }
+});
+
+// Mobile Swipe
+let startX = 0, startY = 0;
+const gameBox = document.getElementById("gameBox");
+
+gameBox.addEventListener("touchstart", e => {
+  startX = e.touches[0].clientX;
+  startY = e.touches[0].clientY;
+});
+
+gameBox.addEventListener("touchend", e => {
+  const dx = e.changedTouches[0].clientX - startX;
+  const dy = e.changedTouches[0].clientY - startY;
+
+  let moved = false;
+  if (Math.abs(dx) > Math.abs(dy)) {
+    if (dx > 30) moved = moveRight();
+    else if (dx < -30) moved = moveLeft();
+  } else {
+    if (dy > 30) moved = moveDown();
+    else if (dy < -30) moved = moveUp();
+  }
+
+  if (moved) {
+    addTile();
+    draw();
+    if (gameOver()) alert("Game Over! Final Score: " + score);
+  }
+});
+
+// Theme
+themeSelect.addEventListener("change", () => {
+  document.body.className = themeSelect.value;
+});
+
+restartBtn.addEventListener("click", init);
+init();
+</script>
+
+</body>
+</html>
