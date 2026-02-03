@@ -91,15 +91,16 @@ main {
   flex: 1;
   display: flex;
   flex-direction: column;
-  justify-content: center;
   align-items: center;
   padding: 10px;
   overflow-y: auto;
+  gap: 20px;
 }
 
 .game-container {
   width: 100%;
   max-width: 360px;
+  flex-shrink: 0;
 }
 
 .game {
@@ -467,10 +468,6 @@ grid.addEventListener("touchstart", e => {
   startX = e.touches[0].clientX;
   startY = e.touches[0].clientY;
 }, false);
-
-grid.addEventListener("touchmove", e => {
-  e.preventDefault(); // Prevent pull-to-refresh and scrolling
-}, { passive: false });
 
 grid.addEventListener("touchend", e => {
   const dx = e.changedTouches[0].clientX - startX;
