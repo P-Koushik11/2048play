@@ -3,26 +3,47 @@
 <head>
 <meta charset="UTF-8">
 
-<!-- SEO -->
-<meta name="description" content="Play 2048 online for free. 2048 Pro+ is a fast, mobile-friendly puzzle game with dark, light, and neon themes. Enjoy swipe and keyboard controls, high-score tracking, and smooth gameplay.">
-<meta name="keywords" content="2048 play, 2048 game, play 2048 online, free 2048, 2048 puzzle, merge tiles game, brain game">
+<!-- SEO & Meta Tags -->
+<meta name="description" content="Play 2048 online for free. A fast, mobile-friendly puzzle game with dark, light, and neon themes. Enjoy swipe and keyboard controls, high-score tracking, and smooth gameplay on 2048play.in.">
+<meta name="keywords" content="2048 play, 2048 game, play 2048 online, free 2048, 2048 puzzle game, merge tiles game, brain game, number puzzle">
 <meta name="author" content="2048play.in">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#111">
+<meta name="robots" content="index, follow">
+<meta property="og:title" content="2048 Play Online | Free Mobile Puzzle Game">
+<meta property="og:description" content="Play the classic 2048 puzzle game online. Free, mobile-friendly, with multiple themes and high score tracking.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://2048play.in/">
 
-<title>2048 Play Online | Free Mobile & Web Puzzle Game</title>
+<title>Play 2048 Online Free | Mobile Puzzle Game | 2048play.in</title>
 
 <!-- FAVICON -->
 <link rel="icon" href="images/favicon.ico" type="image/x-icon">
+<link rel="canonical" href="https://2048play.in/index.html">
 
 <style>
-* { box-sizing: border-box; }
+* { 
+  box-sizing: border-box;
+  -webkit-touch-callout: none;
+  -webkit-user-select: none;
+  user-select: none;
+}
+
+html, body {
+  width: 100%;
+  height: 100%;
+  overflow-x: hidden;
+  -webkit-user-select: none;
+  user-select: none;
+}
 
 body {
   margin: 0;
-  font-family: Arial, sans-serif;
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  overscroll-behavior: none;
 }
 
 /* THEMES */
@@ -30,47 +51,80 @@ body.dark { background: #111; color: white; }
 body.light { background: #f2f2f2; color: #111; }
 body.neon { background: #000; color: #0ff; }
 
-header, footer {
-  padding: 12px;
+header {
+  padding: 15px 12px;
   text-align: center;
-  background: #222;
+  background: linear-gradient(135deg, #1a1a1a 0%, #222 100%);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.3);
+}
+
+header h1 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+nav {
+  margin-top: 10px;
+  display: flex;
+  justify-content: center;
+  gap: 3px;
+  flex-wrap: wrap;
 }
 
 nav a {
   color: inherit;
-  margin: 0 8px;
+  padding: 6px 12px;
   text-decoration: none;
-  font-weight: bold;
+  font-weight: 600;
+  font-size: 13px;
+  border-radius: 4px;
+  transition: background 0.2s;
+}
+
+nav a:hover {
+  background: rgba(255,255,255,0.1);
 }
 
 main {
   flex: 1;
   display: flex;
+  flex-direction: column;
   justify-content: center;
   align-items: center;
   padding: 10px;
+  overflow-y: auto;
+}
+
+.game-container {
+  width: 100%;
+  max-width: 360px;
 }
 
 .game {
   width: 100%;
-  max-width: 360px;
   background: #222;
   padding: 15px;
   border-radius: 12px;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.3);
 }
 
 .stats, .controls {
   display: flex;
   justify-content: space-between;
+  gap: 8px;
   margin-bottom: 10px;
 }
 
 .box {
   background: #333;
-  padding: 6px 10px;
+  padding: 8px 12px;
   border-radius: 6px;
-  min-width: 90px;
+  flex: 1;
   text-align: center;
+  font-size: 12px;
+  font-weight: 600;
 }
 
 .grid {
@@ -80,6 +134,7 @@ main {
   background: #000;
   padding: 8px;
   border-radius: 10px;
+  touch-action: none;
 }
 
 .tile {
@@ -91,35 +146,105 @@ main {
   font-size: 24px;
   border-radius: 6px;
   background: #444;
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 /* TILE COLORS */
+.tile[data-value="0"] { background: #444; }
 .tile[data-value="2"] { background: #eee4da; color: #111; }
 .tile[data-value="4"] { background: #ede0c8; color: #111; }
-.tile[data-value="8"] { background: #f2b179; }
-.tile[data-value="16"] { background: #f59563; }
-.tile[data-value="32"] { background: #f67c5f; }
-.tile[data-value="64"] { background: #f65e3b; }
-.tile[data-value="128"] { background: #edcf72; color: #111; }
-.tile[data-value="256"] { background: #edcc61; color: #111; }
-.tile[data-value="512"] { background: #edc850; color: #111; }
-.tile[data-value="1024"] { background: #edc53f; color: #111; }
-.tile[data-value="2048"] { background: gold; color: #111; }
+.tile[data-value="8"] { background: #f2b179; color: #111; }
+.tile[data-value="16"] { background: #f59563; color: #111; }
+.tile[data-value="32"] { background: #f67c5f; color: #fff; }
+.tile[data-value="64"] { background: #f65e3b; color: #fff; }
+.tile[data-value="128"] { background: #edcf72; color: #111; font-size: 20px; }
+.tile[data-value="256"] { background: #edcc61; color: #111; font-size: 20px; }
+.tile[data-value="512"] { background: #edc850; color: #111; font-size: 20px; }
+.tile[data-value="1024"] { background: #edc53f; color: #111; font-size: 18px; }
+.tile[data-value="2048"] { background: gold; color: #111; font-size: 18px; font-weight: 900; }
 
 img.preview {
   width: 100%;
   border-radius: 10px;
   margin-bottom: 10px;
+  display: block;
 }
 
 select, button {
-  padding: 6px;
+  padding: 8px 12px;
   border-radius: 5px;
   border: none;
+  background: #444;
+  color: inherit;
+  cursor: pointer;
+  font-weight: 600;
+  font-size: 13px;
+  transition: background 0.2s;
+}
+
+select:hover, button:hover {
+  background: #555;
+}
+
+button {
+  flex: 1;
+}
+
+/* CONTENT SECTION */
+.content {
+  width: 100%;
+  max-width: 800px;
+  margin: 20px auto;
+  padding: 20px;
+  background: #222;
+  border-radius: 12px;
+  line-height: 1.6;
+  font-size: 14px;
+}
+
+.content h2 {
+  margin-top: 20px;
+  margin-bottom: 10px;
+  font-size: 18px;
+  color: #fff;
+  border-bottom: 2px solid #444;
+  padding-bottom: 8px;
+}
+
+.content p {
+  margin: 8px 0;
+  color: #ddd;
+}
+
+.content ul {
+  padding-left: 20px;
+  color: #ddd;
+}
+
+.content li {
+  margin: 6px 0;
+}
+
+footer {
+  padding: 20px 12px;
+  text-align: center;
+  background: #111;
+  border-top: 1px solid #333;
+  font-size: 13px;
+}
+
+footer p {
+  margin: 6px 0;
+  color: #888;
 }
 
 @media (max-width: 400px) {
   .tile { font-size: 20px; }
+  header h1 { font-size: 20px; }
+  nav a { padding: 5px 8px; font-size: 12px; }
+  .content { padding: 15px; font-size: 13px; }
+  .content h2 { font-size: 16px; }
 }
 </style>
 </head>
@@ -138,32 +263,82 @@ select, button {
 </header>
 
 <main>
-  <div class="game" id="gameBox">
+  <div class="game-container">
+    <div class="game" id="gameBox">
 
-    <!-- IMAGE PLACEHOLDER -->
-    <img src="images/2048-preview.png" alt="2048 Game Preview" class="preview">
+      <!-- IMAGE PLACEHOLDER -->
+      <img src="images/2048-preview.png" alt="2048 Game Preview - Free Online Puzzle" class="preview">
 
-    <div class="stats">
-      <div class="box">Score<br><span id="score">0</span></div>
-      <div class="box">High<br><span id="high">0</span></div>
+      <div class="stats">
+        <div class="box">Score<br><span id="score">0</span></div>
+        <div class="box">High<br><span id="high">0</span></div>
+      </div>
+
+      <div class="controls">
+        <button id="restartBtn">Restart</button>
+        <select id="themeSelect">
+          <option value="dark">Dark</option>
+          <option value="light">Light</option>
+          <option value="neon">Neon</option>
+        </select>
+      </div>
+
+      <div class="grid" id="grid"></div>
     </div>
 
-    <div class="controls">
-      <button id="restartBtn">Restart</button>
-      <select id="themeSelect">
-        <option value="dark">Dark</option>
-        <option value="light">Light</option>
-        <option value="neon">Neon</option>
-      </select>
-    </div>
+    <!-- SEO CONTENT SECTION -->
+    <div class="content">
+      <h2>How to Play 2048</h2>
+      <p>Welcome to <strong>2048 Play</strong>, the ultimate free online puzzle game experience. 2048 is a simple yet addictive tile-merging puzzle game that challenges your strategic thinking and memory. Here's how to <strong>play 2048 online</strong> on our site:</p>
+      
+      <p><strong>Game Mechanics:</strong> You control a 4x4 grid of numbered tiles. Use arrow keys (or WASD) on desktop, or swipe gestures on mobile to move tiles in any direction. When two tiles with the same number touch, they merge into one tile with their combined value. Your goal is to create a tile with the value 2048.</p>
+      
+      <p><strong>On Mobile:</strong> Swipe up, down, left, or right to move your tiles. The game responds smoothly to touch input, making it perfect for playing 2048 on your smartphone or tablet. After each move, a new tile appears on the board.</p>
 
-    <div class="grid" id="grid"></div>
+      <p><strong>On Desktop:</strong> Use arrow keys or the letters A (left), D (right), W (up), S (down) to move tiles. You can play 2048 directly in your web browser without downloading anything.</p>
+
+      <h2>Tips to Reach 2048 Faster</h2>
+      <p>Here are some winning strategies for your next game:</p>
+      <ul>
+        <li><strong>Corner Strategy:</strong> Keep your highest tile in a corner. Build around it systematically to avoid blocking merges.</li>
+        <li><strong>Plan Ahead:</strong> Don't make random moves. Think 2-3 moves ahead to set up powerful combinations.</li>
+        <li><strong>Avoid the Middle:</strong> Try to avoid filling the center of the board. Keep edges and corners active for better movement options.</li>
+        <li><strong>Merge Frequently:</strong> The more you merge, the faster you progress. Aim to create power-tile sequences.</li>
+        <li><strong>Empty Space Management:</strong> Always maintain at least one empty column or row to maximize your options.</li>
+        <li><strong>Build 512s and 1024s:</strong> These are stepping stones to 2048. Focus on creating multiple high-value tiles.</li>
+      </ul>
+
+      <h2>Why Play 2048 Online on 2048play.in?</h2>
+      <p><strong>Free 2048 Puzzle Game:</strong> 2048play.in offers a completely free online 2048 game with no ads interrupting your gameplay, no sign-up required, and no hidden costs. Start playing immediately in your browser.</p>
+
+      <p><strong>Multiple Themes:</strong> Choose between Dark, Light, and Neon themes to customize your gaming experience. Switch themes instantly without restarting the game.</p>
+
+      <p><strong>Mobile-Friendly Design:</strong> Our 2048 online game is fully responsive and works perfectly on all devices—smartphones, tablets, and desktop computers. The interface adapts intelligently to your screen size.</p>
+
+      <p><strong>High Score Tracking:</strong> Your high score is automatically saved in your browser's local storage. Challenge yourself to beat your personal best every time you play.</p>
+
+      <p><strong>Fast & Smooth Gameplay:</strong> Experience instant, lag-free gameplay optimized for performance. No slow loading times—just pure 2048 puzzle action.</p>
+
+      <p><strong>Keyboard & Touch Controls:</strong> This free puzzle game supports both keyboard and swipe controls, giving you the flexibility to play however you prefer.</p>
+
+      <h2>About This 2048 Game</h2>
+      <p>2048 is a classic number puzzle game that has captivated millions of players worldwide. Whether you're looking for a casual brain exercise or a challenging puzzle experience, our free 2048 game delivers endless entertainment. The rules are simple, but mastering the strategy takes practice. Play 2048 online on 2048play.in today and discover why it remains one of the most popular tile-merging games on the internet.</p>
+
+      <p><em>Start playing now and see if you can reach the legendary 2048 tile! Challenge your friends, beat your high score, and enjoy this timeless puzzle game whenever you want.</em></p>
+    </div>
   </div>
 </main>
 
 <footer>
-  <p>Play 2048 online for free on desktop and mobile. Challenge your brain and beat your high score.</p>
-  <p>&copy; 2026 2048play.in</p>
+  <nav>
+    <a href="index.html">Game</a> |
+    <a href="about.html">About</a> |
+    <a href="privacy.html">Privacy</a> |
+    <a href="terms.html">Terms</a> |
+    <a href="contact.html">Contact</a>
+  </nav>
+  <p>Play 2048 online for free on desktop and mobile. Challenge your brain, merge tiles, and beat your high score at 2048play.in.</p>
+  <p>&copy; 2026 2048play.in. All rights reserved.</p>
 </footer>
 
 <script>
@@ -284,26 +459,31 @@ document.addEventListener("keydown", e => {
   }
 });
 
-// Mobile Swipe
+// Mobile Swipe - Prevent pull-to-refresh and improve touch handling
 let startX = 0, startY = 0;
 const gameBox = document.getElementById("gameBox");
 
-gameBox.addEventListener("touchstart", e => {
+grid.addEventListener("touchstart", e => {
   startX = e.touches[0].clientX;
   startY = e.touches[0].clientY;
-});
+}, false);
 
-gameBox.addEventListener("touchend", e => {
+grid.addEventListener("touchmove", e => {
+  e.preventDefault(); // Prevent pull-to-refresh and scrolling
+}, { passive: false });
+
+grid.addEventListener("touchend", e => {
   const dx = e.changedTouches[0].clientX - startX;
   const dy = e.changedTouches[0].clientY - startY;
+  const minSwipeDistance = 30;
 
   let moved = false;
   if (Math.abs(dx) > Math.abs(dy)) {
-    if (dx > 30) moved = moveRight();
-    else if (dx < -30) moved = moveLeft();
+    if (dx > minSwipeDistance) moved = moveRight();
+    else if (dx < -minSwipeDistance) moved = moveLeft();
   } else {
-    if (dy > 30) moved = moveDown();
-    else if (dy < -30) moved = moveUp();
+    if (dy > minSwipeDistance) moved = moveDown();
+    else if (dy < -minSwipeDistance) moved = moveUp();
   }
 
   if (moved) {
@@ -311,7 +491,7 @@ gameBox.addEventListener("touchend", e => {
     draw();
     if (gameOver()) alert("Game Over! Final Score: " + score);
   }
-});
+}, false);
 
 // Theme
 themeSelect.addEventListener("change", () => {
