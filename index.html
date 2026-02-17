@@ -318,6 +318,111 @@ body.neon footer a {
   color: #0ff;
 }
 
+/* Ensure menu links are white in dark/neon themes (header + footer) */
+body.dark header nav a,
+body.dark footer nav a,
+body.neon header nav a,
+body.neon footer nav a {
+  color: #fff !important;
+}
+
+/* Tile animations */
+.tile {
+  transition: transform 180ms cubic-bezier(.2,.8,.2,1), box-shadow 180ms ease, background 180ms ease;
+}
+
+/* improved pop and merge animations */
+@keyframes popIn {
+  0% { transform: scale(0.2) translateY(6px); opacity: 0; filter: blur(2px); }
+  55% { transform: scale(1.12) translateY(-2px); opacity: 1; filter: blur(0); }
+  100% { transform: scale(1) translateY(0); }
+}
+
+@keyframes mergeBounce {
+  0% { transform: scale(1); box-shadow: none; }
+  35% { transform: scale(1.18); box-shadow: 0 8px 30px rgba(255,255,255,0.12); }
+  65% { transform: scale(0.96); }
+  100% { transform: scale(1); box-shadow: none; }
+}
+
+.tile.spawn {
+  animation: popIn 260ms cubic-bezier(.2,.8,.2,1) both;
+}
+
+.tile.merge {
+  animation: mergeBounce 360ms cubic-bezier(.2,.9,.2,1) both;
+}
+
+/* high value glow */
+.tile.high {
+  box-shadow: 0 8px 28px rgba(255,215,0,0.14), inset 0 -6px 12px rgba(0,0,0,0.15);
+}
+
+/* Game title contrast per theme */
+body.dark .game-title,
+body.neon .game-title {
+  color: #fff;
+  text-shadow: 2px 2px 6px rgba(0,0,0,0.6), 0 0 12px rgba(255,255,255,0.04);
+}
+
+/* =========================
+   BISCUIT TILE PALETTE
+========================= */
+
+body.biscuit .tile[data-value="2"]    { background: #f7ead2; color:#5a3e1b; }
+body.biscuit .tile[data-value="4"]    { background: #ffdb9a; color:#4e2c12; }
+body.biscuit .tile[data-value="8"]    { background: #ffd54f; color:#4e2c12; }
+body.biscuit .tile[data-value="16"]   { background: #ffb74d; color:#4e2c12; }
+body.biscuit .tile[data-value="32"]   { background: #ff9800; color:#fff; }
+body.biscuit .tile[data-value="64"]   { background: #f57c00; color:#fff; }
+body.biscuit .tile[data-value="128"]  { background: #e65100; color:#fff; font-size:20px;}
+body.biscuit .tile[data-value="256"]  { background: #bf360c; color:#fff; font-size:20px;}
+body.biscuit .tile[data-value="512"]  { background: #8d1c00; color:#fff; font-size:20px;}
+body.biscuit .tile[data-value="1024"] { background: #4e0d00; color:#ffd166; font-size:18px;}
+body.biscuit .tile[data-value="2048"] {
+  background: linear-gradient(135deg, #ffd700, #ff8f00);
+  color:#4e2c12;
+  box-shadow: 0 0 28px rgba(255,215,0,0.6);
+}
+/* =========================
+   DARK TILE PALETTE
+========================= */
+
+body.dark .tile[data-value="2"]    { background:#cbcaca; color:#fff; }
+body.dark .tile[data-value="4"]    { background:#e48a8a; color:#fff; }
+body.dark .tile[data-value="8"]    { background:#ff7043; color:#fff; }
+body.dark .tile[data-value="16"]   { background:#ff5722; color:#fff; }
+body.dark .tile[data-value="32"]   { background:#f4511e; color:#fff; }
+body.dark .tile[data-value="64"]   { background:#d84315; color:#fff; }
+body.dark .tile[data-value="128"]  { background:#bf360c; color:#fff; font-size:20px;}
+body.dark .tile[data-value="256"]  { background:#8e24aa; color:#fff; font-size:20px;}
+body.dark .tile[data-value="512"]  { background:#5e35b1; color:#fff; font-size:20px;}
+body.dark .tile[data-value="1024"] { background:#3949ab; color:#fff; font-size:18px;}
+body.dark .tile[data-value="2048"] {
+  background: linear-gradient(135deg,#ffd54f,#ff6f00);
+  color:#111;
+  box-shadow: 0 0 30px rgba(255,200,0,0.5);
+}
+/* =========================
+   NEON TILE PALETTE
+========================= */
+
+body.neon .tile[data-value="2"]    { background:#8ccedf; color:#0ff; border:1px solid #0ff; }
+body.neon .tile[data-value="4"]    { background:#06a2c9; color:#0ff; }
+body.neon .tile[data-value="8"]    { background:#005577; color:#0ff; }
+body.neon .tile[data-value="16"]   { background:#007799; color:#0ff; }
+body.neon .tile[data-value="32"]   { background:#00aaff; color:#001; }
+body.neon .tile[data-value="64"]   { background:#00ffaa; color:#001; }
+body.neon .tile[data-value="128"]  { background:#39ff14; color:#001; font-size:20px;}
+body.neon .tile[data-value="256"]  { background:#ff00ff; color:#fff; font-size:20px;}
+body.neon .tile[data-value="512"]  { background:#ff0066; color:#fff; font-size:20px;}
+body.neon .tile[data-value="1024"] { background:#ffea00; color:#001; font-size:18px;}
+body.neon .tile[data-value="2048"] {
+  background: linear-gradient(90deg,#ffffff,#00ffff);
+  color:#001;
+  box-shadow: 0 0 30px #0ff, 0 0 60px rgba(0,255,255,0.4);
+}
+
 /* =========================
    LAYOUT
 ========================= */
@@ -392,7 +497,12 @@ main {
   border-radius: 6px;
   transition: all 0.1s ease;
   transform-origin: center;
+  border-radius: 8px;
+  font-weight: 800;
+  letter-spacing: 1px;
+
 }
+
 
 select, button {
   padding: 10px 16px;
@@ -510,6 +620,7 @@ footer {
 ========================= */
 const SIZE = 4;
 let board = [];
+let previousBoard = Array.from({ length: SIZE }, () => Array(SIZE).fill(0));
 let score = 0;
 let highScore = localStorage.getItem("high2048") || 0;
 
@@ -550,9 +661,29 @@ function draw() {
       tile.className = "tile";
       tile.dataset.value = board[i][j];
       tile.textContent = board[i][j] === 0 ? "" : board[i][j];
+      // Add animation classes based on change from previousBoard
+      const prev = previousBoard[i] ? previousBoard[i][j] : 0;
+      const curr = board[i][j];
+      if (curr !== 0) {
+        if (prev === 0) {
+          tile.classList.add('spawn');
+        } else if (curr > prev) {
+          tile.classList.add('merge');
+        }
+        if (curr >= 2048) tile.classList.add('high');
+      }
+
+      // cleanup animation classes after animation ends
+      tile.addEventListener('animationend', () => {
+        tile.classList.remove('spawn', 'merge');
+      });
+
       grid.appendChild(tile);
     }
   }
+
+  // Save snapshot for next draw comparisons
+  previousBoard = board.map(r => r.slice());
 }
 
 function compress(row) {
