@@ -572,6 +572,7 @@ footer {
       </div>
 
       <div class="controls">
+        <button id="undoBtn" disabled>Undo</button>
         <button id="restartBtn">Restart</button>
         <select id="themeSelect">
           <option value="biscuit">Biscuit</option>
@@ -629,6 +630,25 @@ const scoreDisplay = document.getElementById("score");
 const highDisplay = document.getElementById("high");
 const themeSelect = document.getElementById("themeSelect");
 const restartBtn = document.getElementById("restartBtn");
+const undoBtn = document.getElementById("undoBtn");
+
+// single-step undo state
+let undoState = null;
+
+function saveUndo() {
+  // deep copy board and scores
+  undoState = {
+    board: board.map(r => r.slice()),
+    score: score,
+    highScore: highScore
+  };
+  if (undoBtn) undoBtn.disabled = false;
+}
+
+function clearUndo() {
+  undoState = null;
+  if (undoBtn) undoBtn.disabled = true;
+}
 
 function init() {
   board = Array.from({ length: SIZE }, () => Array(SIZE).fill(0));
@@ -742,17 +762,27 @@ document.addEventListener("keydown", e => {
   if (["ArrowLeft","ArrowRight","ArrowUp","ArrowDown"].includes(e.key)) {
     e.preventDefault();
   }
+  // only act on movement keys
+  const key = e.key;
+  const isMoveKey = ["ArrowLeft","ArrowRight","ArrowUp","ArrowDown","a","A","w","W","s","S","d","D"].includes(key);
+  if (!isMoveKey) return;
+
+  // save undo snapshot
+  saveUndo();
 
   let moved = false;
-  if (["ArrowLeft","a","A"].includes(e.key)) moved = moveLeft();
-  if (["ArrowRight","d","D"].includes(e.key)) moved = moveRight();
-  if (["ArrowUp","w","W"].includes(e.key)) moved = moveUp();
-  if (["ArrowDown","s","S"].includes(e.key)) moved = moveDown();
+  if (["ArrowLeft","a","A"].includes(key)) moved = moveLeft();
+  if (["ArrowRight","d","D"].includes(key)) moved = moveRight();
+  if (["ArrowUp","w","W"].includes(key)) moved = moveUp();
+  if (["ArrowDown","s","S"].includes(key)) moved = moveDown();
 
   if (moved) {
     addTile();
     draw();
     if (gameOver()) alert("Game Over! Final Score: " + score);
+  } else {
+    // no change -> clear saved undo
+    clearUndo();
   }
 });
 
@@ -768,20 +798,33 @@ grid.addEventListener("touchend", e => {
   const dx = e.changedTouches[0].clientX - startX;
   const dy = e.changedTouches[0].clientY - startY;
   const minSwipe = 30;
-
   let moved = false;
   if (Math.abs(dx) > Math.abs(dy)) {
-    if (dx > minSwipe) moved = moveRight();
-    else if (dx < -minSwipe) moved = moveLeft();
+    if (dx > minSwipe) {
+      saveUndo();
+      moved = moveRight();
+    }
+    else if (dx < -minSwipe) {
+      saveUndo();
+      moved = moveLeft();
+    }
   } else {
-    if (dy > minSwipe) moved = moveDown();
-    else if (dy < -minSwipe) moved = moveUp();
+    if (dy > minSwipe) {
+      saveUndo();
+      moved = moveDown();
+    }
+    else if (dy < -minSwipe) {
+      saveUndo();
+      moved = moveUp();
+    }
   }
 
   if (moved) {
     addTile();
     draw();
     if (gameOver()) alert("Game Over! Final Score: " + score);
+  } else {
+    clearUndo();
   }
 });
 
@@ -791,7 +834,16 @@ themeSelect.addEventListener("change", () => {
   document.body.classList.add(themeSelect.value);
 });
 
-restartBtn.addEventListener("click", init);
+restartBtn.addEventListener("click", () => { init(); clearUndo(); });
+undoBtn && undoBtn.addEventListener('click', () => {
+  if (!undoState) return;
+  board = undoState.board.map(r => r.slice());
+  score = undoState.score;
+  highScore = undoState.highScore;
+  localStorage.setItem("high2048", highScore);
+  draw();
+  clearUndo();
+});
 init();
 </script>
 
