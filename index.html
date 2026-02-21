@@ -343,17 +343,28 @@ body.neon footer nav a {
 
 @keyframes mergeBounce {
   0% { transform: scale(1); box-shadow: none; }
-  35% { transform: scale(1.18); box-shadow: 0 8px 30px rgba(255,255,255,0.12); }
-  65% { transform: scale(0.96); }
+  35% { transform: scale(1.15); box-shadow: 0 8px 24px rgba(0,0,0,0.15); }
+  65% { transform: scale(0.97); }
   100% { transform: scale(1); box-shadow: none; }
 }
 
 .tile.spawn {
-  animation: popIn 260ms cubic-bezier(.2,.8,.2,1) both;
+  animation: popIn 280ms cubic-bezier(.2,.8,.2,1) both;
 }
 
 .tile.merge {
   animation: mergeBounce 360ms cubic-bezier(.2,.9,.2,1) both;
+}
+
+@keyframes shake {
+  0%,100% { transform: translateX(0); }
+  25% { transform: translateX(-4px); }
+  50% { transform: translateX(4px); }
+  75% { transform: translateX(-2px); }
+}
+
+.grid.shake {
+  animation: shake 300ms ease;
 }
 
 /* high value glow */
@@ -372,8 +383,18 @@ body.neon .game-title {
    BISCUIT TILE PALETTE
 ========================= */
 
-body.biscuit .tile[data-value="2"]    { background: #f7ead2; color:#5a3e1b; }
-body.biscuit .tile[data-value="4"]    { background: #ffdb9a; color:#4e2c12; }
+body.biscuit .tile[data-value="2"] {
+  background: #ffe0af;
+  color: #3f2a16;
+  border: 1px solid #a77b4d;
+}
+
+body.biscuit .tile[data-value="4"] {
+  background: #d9b785;
+  color: #2f1d0d;
+  border: 1px solid #8e5f2d;
+}
+
 body.biscuit .tile[data-value="8"]    { background: #ffd54f; color:#4e2c12; }
 body.biscuit .tile[data-value="16"]   { background: #ffb74d; color:#4e2c12; }
 body.biscuit .tile[data-value="32"]   { background: #ff9800; color:#fff; }
@@ -410,8 +431,20 @@ body.dark .tile[data-value="2048"] {
    NEON TILE PALETTE
 ========================= */
 
-body.neon .tile[data-value="2"]    { background:#8ccedf; color:#0ff; border:1px solid #0ff; }
-body.neon .tile[data-value="4"]    { background:#06a2c9; color:#0ff; }
+body.neon .tile[data-value="2"] {
+  background: #003a3a;
+  color: #00ffffa3;
+  border: 1px solid #00ffff;
+  box-shadow: 0 0 8px rgba(0,255,255,0.4);
+}
+
+body.neon .tile[data-value="4"] {
+  background: #004f4f;
+  color: #00ffff;
+  border: 1px solid #00ffff;
+  box-shadow: 0 0 10px rgba(0,255,255,0.5);
+}
+
 body.neon .tile[data-value="8"]    { background:#005577; color:#0ff; }
 body.neon .tile[data-value="16"]   { background:#007799; color:#0ff; }
 body.neon .tile[data-value="32"]   { background:#00aaff; color:#001; }
@@ -424,6 +457,26 @@ body.neon .tile[data-value="2048"] {
   background: linear-gradient(90deg,#ffffff,#00ffff);
   color:#001;
   box-shadow: 0 0 30px #0ff, 0 0 60px rgba(0,255,255,0.4);
+}
+
+/* =========================
+   HIGH VALUE TILE STYLING
+========================= */
+
+.tile[data-value="4096"],
+.tile[data-value="8192"],
+.tile[data-value="16384"],
+.tile[data-value="32768"],
+.tile[data-value="65536"] {
+  font-size: 16px;
+  box-shadow: 0 0 30px rgba(255,215,0,0.5);
+}
+
+.tile[data-value="8192"],
+.tile[data-value="16384"],
+.tile[data-value="32768"],
+.tile[data-value="65536"] {
+  font-size: 14px;
 }
 
 /* =========================
@@ -455,12 +508,12 @@ main {
   flex-direction: column;
   align-items: center;
   padding: 10px;
-  gap: 20px;
+  gap: 12px;
 }
 
 .game-container {
-  width: 100%;
-  max-width: 360px;
+  width: 90vw;
+  max-width: 420px;
 }
 
 .game {
@@ -475,6 +528,10 @@ main {
   margin-bottom: 10px;
 }
 
+.controls {
+  margin-top: 20px;
+}
+
 .box {
   padding: 8px;
   flex: 1;
@@ -485,8 +542,8 @@ main {
 .grid {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 8px;
-  padding: 8px;
+  gap: 10px;
+  padding: 10px;
   border-radius: 10px;
   touch-action: none;
 }
@@ -496,14 +553,15 @@ main {
   display: flex;
   justify-content: center;
   align-items: center;
-  font-size: 24px;
-  border-radius: 6px;
+  font-size: clamp(18px, 4vw, 26px);
+  border-radius: 8px;
   transition: all 0.1s ease;
   transform-origin: center;
-  border-radius: 8px;
   font-weight: 800;
   letter-spacing: 1px;
-
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 
@@ -541,6 +599,17 @@ footer {
   font-size: 13px;
 }
 
+/* DESKTOP */
+@media (min-width: 768px) {
+  header {
+    padding: 8px 12px;
+  }
+
+  .game-title {
+    font-size: 42px;
+  }
+}
+
 /* MOBILE */
 @media (max-width: 400px) {
   .tile { font-size: 20px; }
@@ -574,6 +643,8 @@ footer {
         <div class="box">High<br><span id="high">0</span></div>
       </div>
 
+      <div class="grid" id="grid"></div>
+
       <div class="controls">
         <button id="undoBtn" disabled>Undo</button>
         <button id="restartBtn">Restart</button>
@@ -583,8 +654,6 @@ footer {
           <option value="neon">Neon</option>
         </select>
       </div>
-
-      <div class="grid" id="grid"></div>
     </div>
   </div>
 
@@ -782,7 +851,13 @@ document.addEventListener("keydown", e => {
   if (moved) {
     addTile();
     draw();
-    if (gameOver()) alert("Game Over! Final Score: " + score);
+    if (gameOver()) {
+      document.querySelector('.grid').classList.add('shake');
+      setTimeout(() => {
+        document.querySelector('.grid').classList.remove('shake');
+        alert("Game Over! Final Score: " + score);
+      }, 300);
+    }
   } else {
     // no change -> clear saved undo
     clearUndo();
@@ -825,7 +900,13 @@ grid.addEventListener("touchend", e => {
   if (moved) {
     addTile();
     draw();
-    if (gameOver()) alert("Game Over! Final Score: " + score);
+    if (gameOver()) {
+      document.querySelector('.grid').classList.add('shake');
+      setTimeout(() => {
+        document.querySelector('.grid').classList.remove('shake');
+        alert("Game Over! Final Score: " + score);
+      }, 300);
+    }
   } else {
     clearUndo();
   }
